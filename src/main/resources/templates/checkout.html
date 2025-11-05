@@ -1,0 +1,22 @@
+<!-- checkout.html — Customer checkout page -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Checkout - SuperShop</title>
+</head>
+<body>
+<h2>Checkout</h2>
+<form action="/checkout" method="post">
+    <label>Full Name:</label>
+    <input type="text" name="name" required><br>
+
+    <label>Email:</label>
+    <input type="email" name="email" required><br>
+
+    <label>Total Amount (KES):</label>
+    <input type="number" name="amount" required><br>
+
+    <button type="submit">Pay with M-Pesa</button>
+</form>
+</body>
+</html>

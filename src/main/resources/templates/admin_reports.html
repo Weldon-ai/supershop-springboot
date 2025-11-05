@@ -1,0 +1,44 @@
+<!-- ============================================
+File: admin_reports.html
+Description: Displays all orders with details for analysis
+=============================================== -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sales Reports - SuperShop</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #fff; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
+        th { background: #2d3436; color: white; }
+        tr:hover { background: #f1f1f1; }
+        h2 { color: #2d3436; }
+    </style>
+</head>
+<body>
+
+<h2>📊 SuperShop Sales Reports</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Order #</th>
+            <th>Customer</th>
+            <th>Email</th>
+            <th>Total (KES)</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.orderNumber}"></td>
+            <td th:text="${order.customerName}"></td>
+            <td th:text="${order.customerEmail}"></td>
+            <td th:text="${order.totalAmount}"></td>
+            <td th:text="${order.orderTime}"></td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

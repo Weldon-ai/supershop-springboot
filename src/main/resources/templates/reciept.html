@@ -1,0 +1,38 @@
+<!-- receipt.html — Displays order details -->
+<!-- receipt.html — Shows order number, name, time, and total -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Receipt - SuperShop</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f6f6f6; }
+        .receipt { background: white; padding: 25px; border-radius: 15px; width: 500px; margin: auto; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+        h2 { color: #28a745; text-align: center; }
+        .info { margin-bottom: 20px; }
+        .info p { margin: 8px 0; }
+        .footer { text-align: center; margin-top: 25px; color: #777; }
+    </style>
+</head>
+<body>
+    <div class="receipt">
+        <h2>SuperShop Order Receipt 🧾</h2>
+
+        <div class="info">
+            <p><strong>Order Number:</strong> <span th:text="${order.orderNumber}"></span></p>
+            <p><strong>Customer Name:</strong> <span th:text="${order.customerName}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${order.customerEmail}"></span></p>
+            <p><strong>Total Paid (KES):</strong> <span th:text="${order.totalAmount}"></span></p>
+            <p><strong>Order Time:</strong> <span th:text="${order.orderTime}"></span></p>
+        </div>
+
+        <hr>
+        <p><strong>M-Pesa Response:</strong> <span th:text="${mpesaResponse}"></span></p>
+        <hr>
+
+        <div class="footer">
+            <p>Thank you for shopping with SuperShop!</p>
+            <p>🕒 Generated automatically at checkout.</p>
+        </div>
+    </div>
+</body>
+</html>

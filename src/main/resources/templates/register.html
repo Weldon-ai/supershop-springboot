@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>SuperShop Registration</title>
+</head>
+<body>
+<h2>Create Your SuperShop Account</h2>
+<form th:action="@{/register}" method="post">
+    <label>Full Name:</label><input type="text" name="fullName" required><br>
+    <label>Username:</label><input type="text" name="username" required><br>
+    <label>Email:</label><input type="email" name="email" required><br>
+    <label>Password:</label><input type="password" name="password" required><br>
+    <button type="submit">Register</button>
+
+<a th:href="@{/login}">Back to Login</a>
+</body>
+</html>

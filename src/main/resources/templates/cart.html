@@ -1,0 +1,65 @@
+<!-- cart.html — Displays cart items -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Cart - SuperShop</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Link your CSS -->
+</head>
+<body>
+    <header>
+        <h1>SuperShop Cart 🛒</h1>
+        <a href="/products">Continue Shopping</a>
+    </header>
+
+    <main>
+        <div id="cart-items"></div> <!-- Container for cart items -->
+
+        <div id="cart-summary">
+            <p>Total: <span id="total-price">0</span> KES</p>
+            <button id="checkout-btn">Checkout</button>
+        </div>
+    </main>
+
+    <script>
+        const userId = 1; // Replace with logged-in user ID
+
+        // Fetch cart items from API
+        async function loadCart() {
+            const res = await fetch(`/api/cart/${userId}`);
+            const cart = await res.json();
+            const container = document.getElementById('cart-items');
+            container.innerHTML = ''; // Clear container
+
+            let total = 0;
+            cart.items.forEach(item => {
+                total += item.quantity * item.product.price;
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <p>${item.product.name} - ${item.quantity} x KES ${item.product.price}</p>
+                    <button onclick="removeFromCart(${item.product.id})">Remove</button>
+                `;
+                container.appendChild(div);
+            });
+
+            document.getElementById('total-price').innerText = total;
+        }
+
+        // Remove item from cart
+        async function removeFromCart(productId) {
+            await fetch(`/api/cart/remove?userId=${userId}&productId=${productId}`, { method: 'POST' });
+            loadCart(); // Refresh cart
+        }
+
+        // Checkout button click
+        document.getElementById('checkout-btn').addEventListener('click', async () => {
+            const res = await fetch(`/api/orders/checkout?userId=${userId}`, { method: 'POST' });
+            const order = await res.json();
+            alert(`Order placed! Order ID: ${order.id}`);
+            loadCart(); // Clear cart view
+        });
+
+        loadCart(); // Load cart on page load
+    </script>
+</body>
+</html>
