@@ -2,16 +2,106 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>SuperShop Registration</title>
+    <style>
+        /* Basic reset and font */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; /* Ensure padding doesn't affect width */
+            font-family: Arial, sans-serif; /* Clean readable font */
+        }
+
+        body {
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            height: 100vh; /* Full viewport height */
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2); /* Gentle gradient */
+        }
+
+        form {
+            background-color: #fff; /* White form */
+            padding: 30px 40px; /* Space inside form */
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); /* Soft shadow */
+            width: 350px; /* Fixed width */
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc; /* Light border */
+            border-radius: 8px; /* Rounded input */
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #007bff; /* Blue focus */
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff; /* Blue button */
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-<h2>Create Your SuperShop Account</h2>
-<form th:action="@{/register}" method="post">
-    <label>Full Name:</label><input type="text" name="fullName" required><br>
-    <label>Username:</label><input type="text" name="username" required><br>
-    <label>Email:</label><input type="email" name="email" required><br>
-    <label>Password:</label><input type="password" name="password" required><br>
-    <button type="submit">Register</button>
-
-<a th:href="@{/login}">Back to Login</a>
+    <form th:action="@{/register}" method="post">
+        <h2>Create Your SuperShop Account</h2>
+        <label>Full Name:</label>
+        <input type="text" name="fullName" required>
+        
+        <label>Username:</label>
+        <input type="text" name="username" required>
+        
+        <label>Email:</label>
+        <input type="email" name="email" required>
+        
+        <label>Password:</label>
+        <input type="password" name="password" required>
+        
+        <button type="submit">Register</button>
+        <a th:href="@{/login}">Back to Login</a>
+    </form>
 </body>
 </html>
