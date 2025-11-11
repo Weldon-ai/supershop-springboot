@@ -2,14 +2,13 @@ package com.weldon.supershop.service;
 
 import org.springframework.stereotype.Service;
 
-// Marks this class as a Spring service (business logic)
 @Service
 public class MpesaService {
 
-    // This method simulates M-Pesa STK Push payment
-    public String simulatePayment(double amount, String phoneNumber) {
-        // Simulate M-Pesa API response message
-        return "M-Pesa STK Push simulated successfully for KES " + amount +
-                " to phone " + phoneNumber + ".";
+    // This method simulates STK push. Integrate Safaricom Daraja API here.
+    public boolean initiateStkPush(String phone, double amount, String accountReference) {
+        // TODO: Replace this simulation with real API call to Daraja
+        System.out.println("STK Push triggered for " + phone + " amount: " + amount);
+        return true; // assume payment succeeds for now
     }
 }

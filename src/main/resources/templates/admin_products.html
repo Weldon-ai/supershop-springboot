@@ -1,0 +1,28 @@
+<h2>🛍️ All Products</h2>
+<table border="1">
+    <tr>
+        <th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Actions</th>
+    </tr>
+    <tr th:each="product : ${products}">
+        <td th:text="${product.id}"></td>
+        <td th:text="${product.name}"></td>
+        <td th:text="${product.category}"></td>
+        <td th:text="${product.price}"></td>
+        <td>
+            <a th:href="@{'/admin/products/edit/' + ${product.id}}">Edit</a> |
+            <a th:href="@{'/admin/products/delete/' + ${product.id}}">Delete</a>
+        </td>
+    </tr>
+</table>
+
+<h3>🆕 Recent Products</h3>
+<ul>
+    <li th:each="product : ${recentProducts}" th:text="${product.name} + ' (' + product.category + ') - KES ' + ${product.price}"></li>
+</ul>
+
+<h3>⭐ Recommended Products</h3>
+<ul>
+    <li th:each="product : ${recommendedProducts}" th:text="${product.name} + ' (' + product.category + ') - KES ' + ${product.price}"></li>
+</ul>
+
+<p><a th:href="@{/admin/dashboard}">🏠 Back to Dashboard</a></p>

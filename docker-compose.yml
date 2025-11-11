@@ -1,29 +1,34 @@
-version: '3.8'
+version: "3.9"
 
 services:
-  mysql:
-    image: mysql:8
-    container_name: supershop-mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: vivianstore_db
-      MYSQL_USER: cheseh2005
-      MYSQL_PASSWORD: yourpassword
-    ports:
-      - "3306:3306"
-
   app:
     build: .
     container_name: supershop-app
-    restart: always
     ports:
-      - "8080:8080"
+      - "8080:8080"  # Map app port
     environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_NAME: vivianstore_db
-      DB_USER: cheseh2005
-      DB_PASSWORD: yourpassword
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/supershop_db
+      SPRING_DATASOURCE_USERNAME: weldon
+      SPRING_DATASOURCE_PASSWORD: supersecret
     depends_on:
-      - mysql
+      - db
+    volumes:
+      - ./frontend:/usr/share/nginx/html  # Optional: map local frontend for live reload
+
+  db:
+    image: mysql:8.1
+    container_name: supershop-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: vivianstore_db
+      MYSQL_USER: cheseh2005
+      MYSQL_PASSWORD: yourpassword
+      ##MYSQL_ROOT_PASSWORD: rootsecret  # Added root password
+    ports:
+      - "3307:3306"  # Avoid host conflicts
+    volumes:
+      - db-data:/var/lib/mysql  # Persist database
+
+volumes:
+  db-data:  # Named volume for MySQL persistence
+    driver: local

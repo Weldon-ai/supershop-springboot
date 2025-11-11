@@ -1,9 +1,3 @@
-<!-- ============================================
-   File: products.html
-   Author: Weldon Kipchirchir Cheserek
-   Description: Amazon-style responsive product listing with pre-filled products
-   ============================================ -->
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
@@ -20,8 +14,8 @@
         .categories button { background-color: #f0f0f0; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-size: 14px; transition: 0.3s; }
         .categories button:hover { background-color: #232f3e; color: white; }
         .products-container { padding: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; }
-        .product-card { background-color: #fff; border-radius: 12px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); overflow: hidden; transition: 0.3s; }
-        .product-card:hover { transform: scale(1.03); box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15); }
+        .product-card { background-color: #fff; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); overflow: hidden; transition: 0.3s; }
+        .product-card:hover { transform: scale(1.03); box-shadow: 0 5px 12px rgba(0,0,0,0.15); }
         .product-card img { width: 100%; height: 240px; object-fit: cover; }
         .product-info { padding: 15px; }
         .product-info h3 { font-size: 16px; font-weight: 600; color: #333; margin: 0 0 5px 0; }
@@ -33,157 +27,116 @@
 </head>
 <body>
 
-    <header>
-        <h1>🛍️ SuperShop</h1>
-        <nav>
-            <a th:href="@{/}">Home</a>
-            <a th:href="@{/cart}">Cart</a>
-            <a th:href="@{/logout}">Logout</a>
-        </nav>
-    </header>
+<header>
+    <h1>🛍️ SuperShop</h1>
+    <nav>
+        <a th:href="@{/products}">Home</a>
+        <a th:href="@{/cart}">Cart</a>
+        <a th:href="@{/logout}">Logout</a>
+    </nav>
+</header>
 
-    <div class="categories">
-        <button onclick="filterCategory('All')">All</button>
-        <button onclick="filterCategory('Men')">Men</button>
-        <button onclick="filterCategory('Women')">Women</button>
-        <button onclick="filterCategory('Kids')">Kids</button>
-        <button onclick="filterCategory('Shoes')">Shoes</button>
-        <button onclick="filterCategory('Accessories')">Accessories</button>
-        <button onclick="filterCategory('Sportswear')">Sportswear</button>
-        <button onclick="filterCategory('Casuals')">Casuals</button>
-        <button onclick="filterCategory('Traditional')">Traditional</button>
+<!-- Category Buttons -->
+<div class="categories">
+    <button onclick="filterCategory('All')">All</button>
+    <button onclick="filterCategory('Men')">Men</button>
+    <button onclick="filterCategory('Women')">Women</button>
+    <button onclick="filterCategory('Kids')">Kids</button>
+    <button onclick="filterCategory('Shoes')">Shoes</button>
+    <button onclick="filterCategory('Accessories')">Accessories</button>
+    <button onclick="filterCategory('Sportswear')">Sportswear</button>
+    <button onclick="filterCategory('Casuals')">Casuals</button>
+    <button onclick="filterCategory('Traditional')">Traditional</button>
+</div>
+
+<div class="products-container" id="productsContainer">
+    <!-- Thymeleaf loop for products from DB -->
+    <div th:each="product : ${products}"
+         class="product-card"
+         th:attr="data-category=${product.category}"
+         th:data-id="${product.id}">
+        <img th:src="@{${product.imageUrl}}" th:alt="${product.name}"/>
+        <div class="product-info">
+            <h3 th:text="${product.name}">Product Name</h3>
+            <p class="price" th:text="'Ksh ' + ${product.price}">1200</p>
+            <p th:text="${product.description}">Description</p>
+            <button class="buy-btn" th:attr="data-id=${product.id}">Add to Cart</button>
+        </div>
     </div>
 
-    <div class="products-container" id="productsContainer">
-        <!-- Pre-filled products -->
-        <!-- MEN -->
-        <div class="product-card" data-category="Men">
-            <img src="https://images.unsplash.com/photo-1593032465171-3799f98f8d53?auto=format&fit=crop&w=500&q=80" alt="Classic Shirt"/>
-            <div class="product-info">
-                <h3>Classic Shirt</h3>
-                <p class="price">KSh 1200</p>
-                <p>Comfortable cotton shirt</p>
-                <button class="buy-btn">Add to Cart</button>
-            </div>
+    <!-- Inline test products (fallback for testing) -->
+    <div class="product-card" data-category="Men" data-id="101">
+        <img src="/images/products/mens_casual_shirt.jpg" alt="Men's Casual Shirt"/>
+        <div class="product-info">
+            <h3>Men's Casual Shirt</h3>
+            <p class="price">Ksh 1500</p>
+            <p>Comfortable cotton shirt</p>
+            <button class="buy-btn" data-id="101">Add to Cart</button>
         </div>
-        <div class="product-card" data-category="Men">
-            <img src="https://images.unsplash.com/photo-1593032457869-6d7c0c49de2f?auto=format&fit=crop&w=500&q=80" alt="Casual T-Shirt"/>
-            <div class="product-info">
-                <h3>Casual T-Shirt</h3>
-                <p class="price">KSh 850</p>
-                <p>Everyday casual t-shirt</p>
-                <button class="buy-btn">Add to Cart</button>
-            </div>
-        </div>
-        <div class="product-card" data-category="Men">
-            <img src="https://images.unsplash.com/photo-1562158073-7b91d4f35a4a?auto=format&fit=crop&w=500&q=80" alt="Formal Pants"/>
-            <div class="product-info">
-                <h3>Formal Pants</h3>
-                <p class="price">KSh 1800</p>
-                <p>Slim-fit formal pants</p>
-                <button class="buy-btn">Add to Cart</button>
-            </div>
-        </div>
-        <div class="product-card" data-category="Men">
-            <img src="https://images.unsplash.com/photo-1580910051076-60765f9911bb?auto=format&fit=crop&w=500&q=80" alt="Hoodie"/>
-            <div class="product-info">
-                <h3>Hoodie</h3>
-                <p class="price">KSh 1600</p>
-                <p>Warm cotton hoodie</p>
-                <button class="buy-btn">Add to Cart</button>
-            </div>
-        </div>
-        <div class="product-card" data-category="Men">
-            <img src="https://images.unsplash.com/photo-1589927986089-35812389fccb?auto=format&fit=crop&w=500&q=80" alt="Denim Jacket"/>
-            <div class="product-info">
-                <h3>Denim Jacket</h3>
-                <p class="price">KSh 2200</p>
-                <p>Stylish denim jacket</p>
-                <button class="buy-btn">Add to Cart</button>
-            </div>
-        </div>
-        <div class="product-card" data-category="Men">
-            <img src="https://images.unsplash.com/photo-1593032470260-1ad64a6f8e2d?auto=format&fit=crop&w=500&q=80" alt="Sports Shorts"/>
-            <div class="product-info">
-                <h3>Sports Shorts</h3>
-                <p class="price">KSh 950</p>
-                <p>Light and breathable shorts</p>
-                <button class="buy-btn">Add to Cart</button>
-            </div>
-        </div>
-
-        <!-- WOMEN -->
-        <div class="product-card" data-category="Women">
-            <img src="https://images.unsplash.com/photo-1616627981330-14e07d61e7c7?auto=format&fit=crop&w=500&q=80" alt="Evening Dress"/>
-            <div class="product-info">
-                <h3>Evening Dress</h3>
-                <p class="price">KSh 1400</p>
-                <p>Elegant evening dress</p>
-                <button class="buy-btn">Add to Cart</button>
-            </div>
-        </div>
-        <div class="product-card" data-category="Women">
-            <img src="https://images.unsplash.com/photo-1556909216-2e4f7f7e1bb5?auto=format&fit=crop&w=500&q=80" alt="Summer Top"/>
-            <div class="product-info">
-                <h3>Summer Top</h3>
-                <p class="price">KSh 700</p>
-                <p>Light and comfy top</p>
-                <button class="buy-btn">Add to Cart</button>
-            </div>
-        </div>
-        <div class="product-card" data-category="Women">
-            <img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=500&q=80" alt="Jeans"/>
-            <div class="product-info">
-                <h3>Jeans</h3>
-                <p class="price">KSh 1600</p>
-                <p>High-waist slim-fit jeans</p>
-                <button class="buy-btn">Add to Cart</button>
-            </div>
-        </div>
-        <div class="product-card" data-category="Women">
-            <img src="https://images.unsplash.com/photo-1573497491208-6b1acb260507?auto=format&fit=crop&w=500&q=80" alt="Cardigan"/>
-            <div class="product-info">
-                <h3>Cardigan</h3>
-                <p class="price">KSh 1200</p>
-                <p>Soft knitted cardigan</p>
-                <button class="buy-btn">Add to Cart</button>
-            </div>
-        </div>
-        <div class="product-card" data-category="Women">
-            <img src="https://images.unsplash.com/photo-1600180758891-67c2c8a9d430?auto=format&fit=crop&w=500&q=80" alt="Sneakers"/>
-            <div class="product-info">
-                <h3>Sneakers</h3>
-                <p class="price">KSh 2000</p>
-                <p>Comfortable everyday sneakers</p>
-                <button class="buy-btn">Add to Cart</button>
-            </div>
-        </div>
-        <div class="product-card" data-category="Women">
-            <img src="https://images.unsplash.com/photo-1600180758678-fb6b8b3f0f1c?auto=format&fit=crop&w=500&q=80" alt="Skirt"/>
-            <div class="product-info">
-                <h3>Skirt</h3>
-                <p class="price">KSh 900</p>
-                <p>Stylish pleated skirt</p>
-                <button class="buy-btn">Add to Cart</button>
-            </div>
-        </div>
-
-        <!-- Continue the same pattern for Kids, Shoes, Accessories, Sportswear, Casuals, Traditional -->
-        <!-- For brevity, I can provide the full file with all 54 products in the same structure next -->
     </div>
 
-    <script>
-        function filterCategory(category) {
-            const cards = document.querySelectorAll('.product-card');
-            cards.forEach(card => {
-                if (category === 'All' || card.dataset.category === category) {
-                    card.style.display = 'block';
+    <div class="product-card" data-category="Women" data-id="102">
+        <img src="/images/products/womens_summer_dress.jpg" alt="Women's Summer Dress"/>
+        <div class="product-info">
+            <h3>Women's Summer Dress</h3>
+            <p class="price">Ksh 2000</p>
+            <p>Floral summer dress</p>
+            <button class="buy-btn" data-id="102">Add to Cart</button>
+        </div>
+    </div>
+
+    <div class="product-card" data-category="Shoes" data-id="103">
+        <img src="/images/products/mens_running_shoes.jpg" alt="Men's Running Shoes"/>
+        <div class="product-info">
+            <h3>Men's Running Shoes</h3>
+            <p class="price">Ksh 3000</p>
+            <p>Lightweight running shoes</p>
+            <button class="buy-btn" data-id="103">Add to Cart</button>
+        </div>
+    </div>
+
+    <div class="product-card" data-category="Kids" data-id="104">
+        <img src="/images/products/kids_tshirt.jpg" alt="Kids T-Shirt"/>
+        <div class="product-info">
+            <h3>Kids T-Shirt</h3>
+            <p class="price">Ksh 1000</p>
+            <p>Soft cotton t-shirt</p>
+            <button class="buy-btn" data-id="104">Add to Cart</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Filter products by category
+    function filterCategory(category) {
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.style.display = (category === 'All' || card.dataset.category === category) ? 'block' : 'none';
+        });
+    }
+
+    // Add to cart
+    document.querySelectorAll('.buy-btn').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const productId = button.dataset.id;
+            try {
+                const response = await fetch(`/api/cart/add/${productId}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'}
+                });
+                if (response.ok) {
+                    alert('Product added to cart!');
                 } else {
-                    card.style.display = 'none';
+                    const text = await response.text();
+                    alert('Failed to add product: ' + text);
                 }
-            });
-        }
-    </script>
+            } catch (err) {
+                console.error(err);
+                alert('Error adding product to cart.');
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

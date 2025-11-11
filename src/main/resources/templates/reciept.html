@@ -1,33 +1,38 @@
-<!-- receipt.html — Displays order details -->
-<!-- receipt.html — Shows order number, name, time, and total -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>Receipt - SuperShop</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; background: #f6f6f6; }
-        .receipt { background: white; padding: 25px; border-radius: 15px; width: 500px; margin: auto; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
-        h2 { color: #28a745; text-align: center; }
+        .receipt { background: white; padding: 30px; border-radius: 15px; width: 500px; margin: auto; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        h2 { color: #28a745; text-align: center; margin-bottom: 10px; }
         .info { margin-bottom: 20px; }
-        .info p { margin: 8px 0; }
-        .footer { text-align: center; margin-top: 25px; color: #777; }
+        .info p { margin: 6px 0; font-size: 16px; }
+        .note { color: #b12704; font-weight: bold; text-align: center; margin-top: 20px; }
+        hr { border: 0; border-top: 1px solid #ccc; margin: 15px 0; }
+        .footer { text-align: center; margin-top: 25px; color: #777; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="receipt">
-        <h2>SuperShop Order Receipt 🧾</h2>
+        <h2>Welcome <span th:text="${order.customerName}">Customer Name</span> 🛒</h2>
+        <p style="text-align:center;">Phone: <span th:text="${order.customerPhone}">+254700000000</span></p>
 
         <div class="info">
-            <p><strong>Order Number:</strong> <span th:text="${order.orderNumber}"></span></p>
-            <p><strong>Customer Name:</strong> <span th:text="${order.customerName}"></span></p>
-            <p><strong>Email:</strong> <span th:text="${order.customerEmail}"></span></p>
-            <p><strong>Total Paid (KES):</strong> <span th:text="${order.totalAmount}"></span></p>
-            <p><strong>Order Time:</strong> <span th:text="${order.orderTime}"></span></p>
+            <p><strong>Order Number:</strong> <span th:text="${order.orderNumber}">123456</span></p>
+            <p><strong>Email:</strong> <span th:text="${order.customerEmail}">example@mail.com</span></p>
+            <p><strong>Total Paid (KES):</strong> <span th:text="${order.totalAmount}">0.00</span></p>
+            <p><strong>Order Time:</strong> <span th:text="${order.orderTime}">2025-11-10 10:00</span></p>
         </div>
 
         <hr>
-        <p><strong>M-Pesa Response:</strong> <span th:text="${mpesaResponse}"></span></p>
+        <p><strong>M-Pesa Response:</strong> <span th:text="${mpesaResponse}">Success</span></p>
         <hr>
+
+        <div class="note">
+            <p th:text="${note}">Goods once sold cannot be refunded.</p>
+        </div>
 
         <div class="footer">
             <p>Thank you for shopping with SuperShop!</p>

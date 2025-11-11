@@ -1,22 +1,50 @@
-<!-- checkout.html — Customer checkout page -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Checkout - SuperShop</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f7f8fa; margin: 0; padding: 0; }
+        header { background-color: #232f3e; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        header h1 { margin: 0; font-size: 22px; }
+        header a { color: white; text-decoration: none; margin-left: 15px; font-size: 14px; }
+        .checkout-container { max-width: 500px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h2 { text-align: center; margin-bottom: 25px; }
+        label { display: block; margin-top: 15px; font-weight: 600; }
+        input { width: 100%; padding: 10px; margin-top: 5px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; }
+        button { width: 100%; padding: 12px; margin-top: 20px; background-color: #febd69; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px; transition: 0.3s; }
+        button:hover { background-color: #f90; }
+    </style>
 </head>
 <body>
-<h2>Checkout</h2>
-<form action="/checkout" method="post">
-    <label>Full Name:</label>
-    <input type="text" name="name" required><br>
 
-    <label>Email:</label>
-    <input type="email" name="email" required><br>
+<header>
+    <h1>🛍️ SuperShop</h1>
+    <nav>
+        <a th:href="@{/products}">Home</a>
+        <a th:href="@{/cart}">Cart</a>
+    </nav>
+</header>
 
-    <label>Total Amount (KES):</label>
-    <input type="number" name="amount" required><br>
+<div class="checkout-container">
+    <h2>Checkout</h2>
+    <form action="/checkout" method="post">
+        <label>Full Name:</label>
+        <input type="text" name="name" required>
 
-    <button type="submit">Pay with M-Pesa</button>
-</form>
+        <label>Email:</label>
+        <input type="email" name="email" required>
+
+        <label>Phone Number:</label>
+        <input type="tel" name="phone" placeholder="2547XXXXXXXX" required>
+
+        <label>Total Amount (Ksh):</label>
+        <input type="number" name="amount" th:value="${total}" readonly>
+
+        <button type="submit">Pay with M-Pesa</button>
+    </form>
+</div>
+
 </body>
 </html>

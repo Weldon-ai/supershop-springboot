@@ -1,17 +1,11 @@
-// ============================================
-// File: OrderRepository.java
-// Package: com.weldon.supershop.repository
-// Description: Spring Data JPA repository for orders
-// ============================================
+package com.weldon.supershop.repository; // Package for repositories
 
-package com.weldon.supershop.repository; // Make sure package matches
+import com.weldon.supershop.model.Order; // Import the Order entity
+import org.springframework.data.jpa.repository.JpaRepository; // JPA repository interface
+import org.springframework.stereotype.Repository; // Marks this interface as a repository
 
-import com.weldon.supershop.model.Order; // Import Order entity
-import org.springframework.data.jpa.repository.JpaRepository; // JPA repository base class
-import org.springframework.stereotype.Repository; // Marks this as repository
-
-@Repository // Spring recognizes this as a repository bean
+@Repository // Tells Spring Boot this is a repository bean
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    // JpaRepository provides:
-    // save(), findById(), findAll(), delete(), etc.
+    // JpaRepository provides CRUD operations automatically:
+    // save(), findById(), findAll(), deleteById(), etc.
 }

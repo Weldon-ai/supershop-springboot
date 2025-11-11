@@ -1,65 +1,160 @@
-<!-- cart.html — Displays cart items -->
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>My Cart - SuperShop</title>
-    <link rel="stylesheet" href="/css/styles.css"> <!-- Link your CSS -->
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>SuperShop - Cart</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f7f8fa; margin: 0; padding: 0; }
+        header { background-color: #232f3e; color: white; padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; }
+        header h1 { font-size: 22px; font-weight: 600; margin: 0; }
+        nav a { color: white; text-decoration: none; margin-left: 15px; }
+        .cart-container { padding: 30px; max-width: 900px; margin: auto; }
+        .cart-item { display: flex; justify-content: space-between; background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 12px; }
+        .cart-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
+        .cart-info { flex: 1; margin-left: 20px; }
+        .cart-info h3 { margin: 0; font-size: 16px; color: #333; }
+        .cart-info p { margin: 5px 0; color: #777; }
+        .cart-actions button { padding: 8px 12px; background: #febd69; border: none; border-radius: 8px; cursor: pointer; }
+        .cart-actions button:hover { background: #f90; }
+        .total { text-align: right; font-size: 18px; font-weight: 600; margin-top: 20px; }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>SuperShop Cart 🛒</h1>
-        <a href="/products">Continue Shopping</a>
-    </header>
 
-    <main>
-        <div id="cart-items"></div> <!-- Container for cart items -->
+<header>
+    <h1>🛍️ SuperShop</h1>
+    <nav>
+        <a href="/products">Home</a>
+        <a href="/cart">Cart</a>
+        <a href="/logout">Logout</a>
+    </nav>
+</header>
 
-        <div id="cart-summary">
-            <p>Total: <span id="total-price">0</span> KES</p>
-            <button id="checkout-btn">Checkout</button>
-        </div>
-    </main>
+<div class="cart-container" id="cartContainer">
+    <p>Loading cart...</p>
+</div>
+<div class="total" id="cartTotal"></div>
 
-    <script>
-        const userId = 1; // Replace with logged-in user ID
+<script>
+    // Load cart items from backend
+    async function loadCart() {
+        const container = document.getElementById('cartContainer');
+        container.innerHTML = '';
 
-        // Fetch cart items from API
-        async function loadCart() {
-            const res = await fetch(`/api/cart/${userId}`);
-            const cart = await res.json();
-            const container = document.getElementById('cart-items');
-            container.innerHTML = ''; // Clear container
+        try {
+            const res = await fetch('/api/cart/items');
+            const items = await res.json();
 
-            let total = 0;
-            cart.items.forEach(item => {
-                total += item.quantity * item.product.price;
+            if(items.length === 0) {
+                container.innerHTML = '<p>Your cart is empty.</p>';
+                document.getElementById('cartTotal').innerText = '';
+                return;
+            }
+
+            items.forEach(item => {
                 const div = document.createElement('div');
+                div.className = 'cart-item';
                 div.innerHTML = `
-                    <p>${item.product.name} - ${item.quantity} x KES ${item.product.price}</p>
-                    <button onclick="removeFromCart(${item.product.id})">Remove</button>
+                    <img src="${item.imageUrl || '/images/products/default.jpg'}" alt="${item.name}">
+                    <div class="cart-info">
+                        <h3>${item.name}</h3>
+                        <p>Price: Ksh ${item.price}</p>
+                        <p>Quantity: ${item.quantity}</p>
+                    </div>
+                    <div class="cart-actions">
+                        <button onclick="removeFromCart(${item.id})">Remove</button>
+                    </div>
                 `;
                 container.appendChild(div);
             });
 
-            document.getElementById('total-price').innerText = total;
+            // Load total
+            const totalRes = await fetch('/api/cart/total');
+            const total = await totalRes.text();
+            document.getElementById('cartTotal').innerText = `Total: Ksh ${total}`;
+
+        } catch(err) {
+            console.error(err);
+            container.innerHTML = '<p>Error loading cart.</p>';
         }
+    }
 
-        // Remove item from cart
-        async function removeFromCart(productId) {
-            await fetch(`/api/cart/remove?userId=${userId}&productId=${productId}`, { method: 'POST' });
-            loadCart(); // Refresh cart
+    // Remove product from cart
+    async function removeFromCart(productId) {
+        await fetch(`/api/cart/remove/${productId}`, {method: 'POST'});
+        loadCart(); // Reload cart after removal
+    }
+
+    loadCart(); // Initial load
+</script>
+<div class="cart-container" id="cartContainer">
+    <p>Loading cart...</p>
+</div>
+<div class="total" id="cartTotal"></div>
+
+<!-- Checkout button -->
+<div style="text-align: right; margin: 20px;">
+    <button id="checkoutBtn" style="padding: 10px 20px; background-color: #febd69; border: none; border-radius: 8px; cursor: pointer;">Proceed to Checkout</button>
+</div>
+
+<script>
+    async function loadCart() {
+        const container = document.getElementById('cartContainer');
+        container.innerHTML = '';
+
+        try {
+            const res = await fetch('/api/cart/items');
+            const items = await res.json();
+
+            if(items.length === 0) {
+                container.innerHTML = '<p>Your cart is empty.</p>';
+                document.getElementById('cartTotal').innerText = '';
+                document.getElementById('checkoutBtn').style.display = 'none';
+                return;
+            }
+
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'cart-item';
+                div.innerHTML = `
+                    <img src="${item.imageUrl || '/images/products/default.jpg'}" alt="${item.name}">
+                    <div class="cart-info">
+                        <h3>${item.name}</h3>
+                        <p>Price: Ksh ${item.price}</p>
+                        <p>Quantity: ${item.quantity}</p>
+                    </div>
+                    <div class="cart-actions">
+                        <button onclick="removeFromCart(${item.id})">Remove</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            // Load total
+            const totalRes = await fetch('/api/cart/total');
+            const total = await totalRes.text();
+            document.getElementById('cartTotal').innerText = `Total: Ksh ${total}`;
+            document.getElementById('checkoutBtn').style.display = 'inline-block';
+
+        } catch(err) {
+            console.error(err);
+            container.innerHTML = '<p>Error loading cart.</p>';
         }
+    }
 
-        // Checkout button click
-        document.getElementById('checkout-btn').addEventListener('click', async () => {
-            const res = await fetch(`/api/orders/checkout?userId=${userId}`, { method: 'POST' });
-            const order = await res.json();
-            alert(`Order placed! Order ID: ${order.id}`);
-            loadCart(); // Clear cart view
-        });
+    async function removeFromCart(productId) {
+        await fetch(`/api/cart/remove/${productId}`, {method: 'POST'});
+        loadCart(); // Reload cart after removal
+    }
 
-        loadCart(); // Load cart on page load
-    </script>
+    // Checkout button click
+    document.getElementById('checkoutBtn').addEventListener('click', () => {
+        window.location.href = '/checkout';
+    });
+
+    loadCart(); // Initial load
+</script>
+
 </body>
 </html>

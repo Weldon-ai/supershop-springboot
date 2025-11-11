@@ -1,63 +1,73 @@
 package com.weldon.supershop.controller;
 
 import com.weldon.supershop.model.Product;
-import com.weldon.supershop.service.ProductService;
+import com.weldon.supershop.model.Category;
+import com.weldon.supershop.repository.ProductRepository;
+import com.weldon.supershop.repository.CategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
-// Controller to handle web requests related to products
 @Controller
 @RequestMapping("/products")
 public class ProductController {
 
-    private final ProductService productService;
+    @Autowired
+    private ProductRepository productRepository;
 
-    // Injecting ProductService
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+    @Autowired
+    private CategoryRepository categoryRepository;
 
-    // Display list of products
+    // --- List all products ---
     @GetMapping
-    public String viewProducts(Model model) {
-        List<Product> products = productService.getAllProducts();
+    public String listProducts(Model model) {
+        List<Product> products = productRepository.findAll();
         model.addAttribute("products", products);
-        return "products"; // returns products.html
+        return "products"; // matches products.html
     }
 
-    // Show form to create a new product
-    @GetMapping("/new")
-    public String showProductForm(Model model) {
-        model.addAttribute("product", new Product());
-        return "product_form"; // returns product_form.html
-    }
+    // --- Show add product form ---
+    @GetMapping("/add")
+    public String showAddProductForm(Model model) {
+        Product product = new Product(); // empty product
+        List<Category> categories = categoryRepository.findAll();
 
-    // Handle form submission to save product
-    @PostMapping("/save")
-    public String saveProduct(@ModelAttribute("product") Product product) {
-        productService.saveProduct(product);
-        return "redirect:/products"; // redirect back to products list
-    }
-
-    // Show form to edit an existing product
-    @GetMapping("/edit/{id}")
-    public String editProduct(@PathVariable Long id, Model model) {
-        Product product = productService.getProductById(id);
         model.addAttribute("product", product);
-        return "product_form";
+        model.addAttribute("categories", categories);
+        return "productform"; // matches productform.html
     }
-@GetMapping("/products")
-public String productsPage() {
-    return "products"; // Return products.html
-}
 
-    // Delete product
+    // --- Show edit product form ---
+    @GetMapping("/edit/{id}")
+    public String showEditProductForm(@PathVariable("id") Long id, Model model) {
+        Optional<Product> optProduct = productRepository.findById(id);
+        if (optProduct.isPresent()) {
+            Product product = optProduct.get();
+            List<Category> categories = categoryRepository.findAll();
+
+            model.addAttribute("product", product);
+            model.addAttribute("categories", categories);
+            return "productform";
+        } else {
+            return "redirect:/products";
+        }
+    }
+
+    // --- Save new or edited product ---
+    @PostMapping("/save")
+    public String saveProduct(@ModelAttribute Product product) {
+        productRepository.save(product);
+        return "redirect:/products";
+    }
+
+    // --- Delete product ---
     @GetMapping("/delete/{id}")
-    public String deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
+    public String deleteProduct(@PathVariable("id") Long id) {
+        productRepository.deleteById(id);
         return "redirect:/products";
     }
 }

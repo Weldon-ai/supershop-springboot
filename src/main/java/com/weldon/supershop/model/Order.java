@@ -1,67 +1,81 @@
-// Order.java — Represents a customer's order with a unique order number
+package com.weldon.supershop.model; // Defines the package for the model
 
-package com.weldon.supershop.model; // Model package
+import jakarta.persistence.*; // Imports JPA annotations
+import java.time.LocalDateTime; // Handles date and time
 
-import jakarta.persistence.*; // Import JPA annotations
-import java.time.LocalDateTime; // For saving order time
-import java.util.List; // For list of order items
-import java.util.UUID; // For generating unique order numbers
-
-@Entity // Marks this class as a database entity
-@Table(name = "orders") // Table name in MySQL
+@Entity
+@Table(name = "orders")
 public class Order {
 
-    @Id // Marks primary key
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto increments ID
-    private Long id; // Unique ID for each order
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private String orderNumber; // Unique order reference (like Amazon)
-    private String customerName; // Customer’s name
-    private String customerEmail; // Customer’s email
-    private double totalAmount; // Total paid
-    private LocalDateTime orderTime; // Time when order placed
+    private String customerName;
+    private String customerEmail;
+    private double totalAmount;
+    private LocalDateTime orderDate;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL) // Relation to order items
-    private List<OrderItem> items; // List of purchased items
+    @Transient
+    private String formattedDate; // Not stored in database
 
-    // Default constructor
-    public Order() {
-        this.orderNumber = generateOrderNumber(); // Auto-generate on creation
-    }
+    // Default constructor (required by JPA)
+    public Order() {}
 
-    // Constructor with parameters
-    public Order(String customerName, String customerEmail, double totalAmount, LocalDateTime orderTime) {
+    // Parameterized constructor
+    public Order(String customerName, String customerEmail, double totalAmount, LocalDateTime orderDate) {
         this.customerName = customerName;
         this.customerEmail = customerEmail;
         this.totalAmount = totalAmount;
-        this.orderTime = orderTime;
-        this.orderNumber = generateOrderNumber(); // Auto-create order number
+        this.orderDate = orderDate;
     }
 
-    // Generate unique order number (prefix + 6 random chars)
-    private String generateOrderNumber() {
-        return "ORD-" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+    // Getters and setters
+    public Long getId() {
+        return id;
     }
 
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getOrderNumber() { return orderNumber; }
-    public void setOrderNumber(String orderNumber) { this.orderNumber = orderNumber; }
+    public String getCustomerName() {
+        return customerName;
+    }
 
-    public String getCustomerName() { return customerName; }
-    public void setCustomerName(String customerName) { this.customerName = customerName; }
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
 
-    public String getCustomerEmail() { return customerEmail; }
-    public void setCustomerEmail(String customerEmail) { this.customerEmail = customerEmail; }
+    public String getCustomerEmail() {
+        return customerEmail;
+    }
 
-    public double getTotalAmount() { return totalAmount; }
-    public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
+    }
 
-    public LocalDateTime getOrderTime() { return orderTime; }
-    public void setOrderTime(LocalDateTime orderTime) { this.orderTime = orderTime; }
+    public double getTotalAmount() {
+        return totalAmount;
+    }
 
-    public List<OrderItem> getItems() { return items; }
-    public void setItems(List<OrderItem> items) { this.items = items; }
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public LocalDateTime getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDateTime orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public String getFormattedDate() {
+        return formattedDate;
+    }
+
+    public void setFormattedDate(String formattedDate) {
+        this.formattedDate = formattedDate;
+    }
 }

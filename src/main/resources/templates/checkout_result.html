@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Order Receipt - SuperShop</title>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f7f8fa; margin: 0; padding: 0; }
+        header { background-color: #232f3e; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        header h1 { margin: 0; font-size: 22px; }
+        header a { color: white; text-decoration: none; margin-left: 15px; font-size: 14px; }
+        .receipt-container { max-width: 600px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h2 { text-align: center; margin-bottom: 25px; }
+        p { font-size: 16px; margin: 10px 0; }
+        .total { font-weight: 700; font-size: 18px; margin-top: 15px; }
+        .btn-home { display: block; width: 100%; text-align: center; margin-top: 25px; padding: 12px; background-color: #febd69; border-radius: 8px; color: #000; text-decoration: none; font-weight: 600; }
+        .btn-home:hover { background-color: #f90; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🛍️ SuperShop</h1>
+    <nav>
+        <a th:href="@{/products}">Home</a>
+        <a th:href="@{/cart}">Cart</a>
+    </nav>
+</header>
+
+<div class="receipt-container">
+    <h2>Thank you for your purchase!</h2>
+    <p><strong>Order ID:</strong> <span th:text="${order.id}"></span></p>
+    <p><strong>Customer Name:</strong> <span th:text="${order.customerName}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${order.customerEmail}"></span></p>
+    <p><strong>Order Date:</strong> <span th:text="${#dates.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span></p>
+    <p class="total"><strong>Total Paid:</strong> Ksh <span th:text="${order.totalAmount}"></span></p>
+
+    <a class="btn-home" th:href="@{/products}">Back to Shopping</a>
+</div>
+
+</body>
+</html>

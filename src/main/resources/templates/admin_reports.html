@@ -3,9 +3,11 @@ File: admin_reports.html
 Description: Displays all orders with details for analysis
 =============================================== -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Sales Reports - SuperShop</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${pageTitle}">Sales Reports - SuperShop</title>
     <style>
         body { font-family: Arial, sans-serif; background: #fff; padding: 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
@@ -13,6 +15,7 @@ Description: Displays all orders with details for analysis
         th { background: #2d3436; color: white; }
         tr:hover { background: #f1f1f1; }
         h2 { color: #2d3436; }
+        a { text-decoration: none; color: #0984e3; }
     </style>
 </head>
 <body>
@@ -31,14 +34,25 @@ Description: Displays all orders with details for analysis
     </thead>
     <tbody>
         <tr th:each="order : ${orders}">
-            <td th:text="${order.orderNumber}"></td>
-            <td th:text="${order.customerName}"></td>
-            <td th:text="${order.customerEmail}"></td>
-            <td th:text="${order.totalAmount}"></td>
-            <td th:text="${order.orderTime}"></td>
+            <td th:text="${order.id}">1</td>
+            <td th:text="${order.customerName}">John Doe</td>
+            <td th:text="${order.customerEmail}">john@example.com</td>
+            <td th:text="${order.totalAmount}">1000</td>
+            <td th:text="${order.formattedDate}">01 Jan 2025, 12:00</td>
         </tr>
     </tbody>
 </table>
+
+<footer style="text-align:center; padding:20px; color:#888;">
+    <p>
+        <a th:href="@{/admin/dashboard}" style="text-decoration:none; color:#0984e3;">
+            🏠 Back to Admin Dashboard
+        </a>
+    </p>
+    <p>
+        SuperShop Sales Reports © 2025 | Built with 💙 by Weldon Kipchirchir Cheserek
+    </p>
+</footer>
 
 </body>
 </html>
