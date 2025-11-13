@@ -135,6 +135,22 @@ Project: SuperShop (Spring Boot + Thymeleaf)
         </div>
     </div>
 </main>
+<a th:href="@{/admin/products}">Manage Products</a>
+<a th:href="@{/admin/products/add}">Add Product</a>
+<a th:href="@{/products}">View Products</a>
+<!-- Example link to Active Users page -->
+<a href="/admin/active-users" style="
+    display:inline-block;
+    padding:10px 15px;
+    background:#232f3e;
+    color:white;
+    text-decoration:none;
+    border-radius:5px;
+    font-weight:bold;
+    margin-top:10px;
+">
+    View Active Users
+</a>
 
 <footer>
     <p><a th:href="@{/admin/reports}">📊 View Sales Reports</a></p>

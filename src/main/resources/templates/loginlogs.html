@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Login Logs</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f7f8fa;
+            padding: 20px;
+        }
+        h1 {
+            color: #232f3e;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #232f3e;
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background-color: #f1f1f1;
+        }
+        tr:hover {
+            background-color: #e0e0e0;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Login Logs</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Login Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="log : ${logs}">
+                    <td th:text="${log.email}">user@example.com</td>
+                    <td th:text="${log.loginTime}">2025-11-12T14:28:21</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

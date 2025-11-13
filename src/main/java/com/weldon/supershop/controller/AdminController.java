@@ -1,25 +1,27 @@
-// ============================================
-// File: AdminController.java
-// Package: com.weldon.supershop.controller
-// Description: Handles admin dashboard requests, reports, and data overview
-// ============================================
-
 package com.weldon.supershop.controller;
 
 import com.weldon.supershop.model.Product;
+import com.weldon.supershop.model.LoginLog;
 import com.weldon.supershop.model.Order;
 import com.weldon.supershop.repository.ProductRepository;
 import com.weldon.supershop.repository.OrderRepository;
+import com.weldon.supershop.repository.LoginLogRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.*;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
+@RequestMapping("/admin")
 public class AdminController {
 
     @Autowired
@@ -28,10 +30,13 @@ public class AdminController {
     @Autowired
     private OrderRepository orderRepository;
 
-    // ===============================
+    @Autowired
+    private LoginLogRepository loginLogRepository;
+
+    // -------------------------
     // Admin Dashboard
-    // ===============================
-    @GetMapping("/admin/dashboard")
+    // -------------------------
+    @GetMapping("/dashboard")
     public String adminDashboard(Model model) {
         List<Product> products = productRepository.findAll();
         List<Order> orders = orderRepository.findAll();
@@ -39,7 +44,6 @@ public class AdminController {
         double totalSales = orders.stream()
                 .mapToDouble(Order::getTotalAmount)
                 .sum();
-
         long totalCustomers = orders.stream()
                 .map(Order::getCustomerEmail)
                 .distinct()
@@ -52,64 +56,115 @@ public class AdminController {
 
         return "admin_dashboard";
     }
-@GetMapping("/admin/products")
-public String viewProducts(Model model) {
-    List<Product> allProducts = productRepository.findAll();
 
-    // Sort products by ID descending to get recent products (assuming higher ID = newer)
-    List<Product> recentProducts = allProducts.stream()
-            .sorted((p1, p2) -> Long.compare(p2.getId(), p1.getId()))
-            .limit(5) // Show 5 most recent products
-            .collect(Collectors.toList());
+    // -------------------------
+    // Products Management
+    // -------------------------
+    @GetMapping("/products")
+    public String viewProducts(Model model) {
+        model.addAttribute("products", productRepository.findAll());
+        return "admin_products";
+    }
 
-    // Optional: simple recommendations (e.g., products over a certain price)
-    List<Product> recommendedProducts = allProducts.stream()
-            .filter(p -> p.getPrice() >= 1000) // example: expensive items
-            .limit(5)
-            .collect(Collectors.toList());
+    @GetMapping({"/products/add", "/products/edit/{id}"})
+    public String showProductForm(@PathVariable(required = false) Long id, Model model) {
+        Product product = (id != null)
+                ? productRepository.findById(id).orElse(new Product())
+                : new Product();
+        model.addAttribute("product", product);
+        return "productform";
+    }
 
-    model.addAttribute("products", allProducts);
-    model.addAttribute("recentProducts", recentProducts);
-    model.addAttribute("recommendedProducts", recommendedProducts);
+    @PostMapping("/products/save")
+    public String saveProduct(@ModelAttribute Product product,
+                              @RequestParam("imageFile") MultipartFile file) throws IOException {
+        if (!file.isEmpty()) {
+            String filename = file.getOriginalFilename();
+            Path uploadPath = Paths.get("src/main/resources/static/images/");
+            if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
 
-    return "admin_products"; // your template
-}
+            Files.copy(file.getInputStream(), uploadPath.resolve(filename),
+                    StandardCopyOption.REPLACE_EXISTING);
+            product.setImageUrl("/images/" + filename);
+        }
 
-    // ===============================
-    // Reports Page
-    // ===============================
-   /*  @GetMapping("/admin/reports")
+        productRepository.save(product);
+        return "redirect:/admin/products";
+    }
+
+    @GetMapping("/products/delete/{id}")
+    public String deleteProduct(@PathVariable Long id) {
+        productRepository.deleteById(id);
+        return "redirect:/admin/products";
+    }
+
+    // -------------------------
+    // Reports / Orders
+    // -------------------------
+    @GetMapping("/reports")
     public String viewReports(Model model) {
         List<Order> orders = orderRepository.findAll();
-
-        // Format order dates for display
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
 
-        List<Order> formattedOrders = orders.stream().map(order -> {
+        orders.forEach(order -> {
             if (order.getOrderDate() != null) {
-                try {
-                    order.setFormattedDate(order.getOrderDate().format(formatter));
-                } catch (Exception e) {
-                    order.setFormattedDate(order.getOrderDate().toString());
-                }
+                order.setFormattedDate(order.getOrderDate().format(formatter));
             } else {
                 order.setFormattedDate("N/A");
             }
-            return order;
-        }).collect(Collectors.toList());
+        });
 
-        model.addAttribute("orders", formattedOrders);
-        model.addAttribute("pageTitle", "Sales Reports - SuperShop");
-
+        model.addAttribute("orders", orders);
         return "admin_reports";
-    }*/
-    @GetMapping("/admin/reports")
-public String viewReports(Model model) {
-    List<Order> orders = orderRepository.findAll();
-    orders.forEach(o -> o.setFormattedDate(o.getOrderDate() != null ? 
-        o.getOrderDate().format(DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm")) : "N/A"));
-    model.addAttribute("orders", orders);
-    return "admin_reports"; // Must match template file name
-}
+    }
 
+    // -------------------------
+    // Active Users (with session duration)
+    // -------------------------
+    @GetMapping("/active-users")
+    public String viewActiveUsers(Model model) {
+        try {
+            List<LoginLog> activeUsers = loginLogRepository.findAll()
+                    .stream()
+                    .filter(log -> log.getLoginTime() != null && log.getLogoutTime() == null)
+                    .collect(Collectors.toList());
+
+            activeUsers.forEach(this::setSessionDuration);
+            model.addAttribute("activeUsers", activeUsers);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("activeUsers", List.of());
+        }
+
+        return "active_users";
+    }
+
+    private void setSessionDuration(LoginLog log) {
+        try {
+            if (log.getLoginTime() != null) {
+                LocalDateTime endTime = (log.getLogoutTime() != null)
+                        ? log.getLogoutTime()
+                        : LocalDateTime.now();
+                Duration duration = Duration.between(log.getLoginTime(), endTime);
+                long hours = duration.toHours();
+                long minutes = duration.toMinutes() % 60;
+                long seconds = duration.getSeconds() % 60;
+                log.setSessionDuration(String.format("%02dh:%02dm:%02ds", hours, minutes, seconds));
+            } else {
+                log.setSessionDuration("N/A");
+            }
+        } catch (Exception e) {
+            log.setSessionDuration("Error");
+        }
+    }
+
+    // -------------------------
+    // Login Logs
+    // -------------------------
+    @GetMapping("/loginlogs")
+    public String viewLoginLogs(Model model) {
+        model.addAttribute("logs", loginLogRepository.findAll());
+        return "loginlogs";
+    }
 }

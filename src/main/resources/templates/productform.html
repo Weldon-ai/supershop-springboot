@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${product.id} != null ? 'Edit Product' : 'Add New Product'">Add/Edit Product</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f7f8fa;
+            padding: 40px;
+        }
+        h1 {
+            color: #232f3e;
+        }
+        form {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 600px;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: #febd69;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #f90;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #0073e6;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 th:text="${product.id} != null ? 'Edit Product' : 'Add New Product'"></h1>
+
+    <form th:action="@{/admin/products/save}" th:object="${product}" method="post" enctype="multipart/form-data">
+        <input type="hidden" th:field="*{id}"/>
+
+        <label for="name">Product Name:</label>
+        <input type="text" id="name" th:field="*{name}" placeholder="Enter product name" required/>
+
+        <label for="description">Description:</label>
+        <textarea id="description" th:field="*{description}" placeholder="Enter product description" required></textarea>
+
+        <label for="category">Select Category:</label>
+        <select id="category" th:field="*{category}" required>
+            <option value="">-- Select Category --</option>
+            <option value="Men">Men</option>
+            <option value="Women">Women</option>
+            <option value="Kids">Kids</option>
+            <option value="Shoes">Shoes</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Sportswear">Sportswear</option>
+            <option value="Casuals">Casuals</option>
+            <option value="Traditional">Traditional</option>
+        </select>
+
+        <label for="price">Price:</label>
+        <input type="number" id="price" th:field="*{price}" placeholder="Enter product price" required/>
+
+        <label for="imageUrl">Image URL:</label>
+        <input type="text" id="imageUrl" th:field="*{imageUrl}" placeholder="Enter image URL or upload below"/>
+
+        <label for="imageFile">Or Upload Image:</label>
+        <input type="file" id="imageFile" name="imageFile" accept="image/*"/>
+
+        <button type="submit" th:text="${product.id} != null ? 'Update Product' : 'Add Product'"></button>
+    </form>
+
+    <a th:href="@{/admin/products}">← Back to Products</a>
+
+</body>
+</html>

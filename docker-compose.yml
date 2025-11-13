@@ -1,34 +1,34 @@
-version: "3.9"
-
 services:
-  app:
-    build: .
-    container_name: supershop-app
-    ports:
-      - "8080:8080"  # Map app port
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/supershop_db
-      SPRING_DATASOURCE_USERNAME: weldon
-      SPRING_DATASOURCE_PASSWORD: supersecret
-    depends_on:
-      - db
-    volumes:
-      - ./frontend:/usr/share/nginx/html  # Optional: map local frontend for live reload
-
-  db:
+  mysql:
     image: mysql:8.1
     container_name: supershop-mysql
-    restart: always
+    restart: unless-stopped
     environment:
+      MYSQL_ROOT_PASSWORD: rootpassword123
       MYSQL_DATABASE: vivianstore_db
       MYSQL_USER: cheseh2005
       MYSQL_PASSWORD: yourpassword
-      ##MYSQL_ROOT_PASSWORD: rootsecret  # Added root password
     ports:
-      - "3307:3306"  # Avoid host conflicts
-    volumes:
-      - db-data:/var/lib/mysql  # Persist database
+      - "3307:3306"
+    networks:
+      - supershop-net
 
-volumes:
-  db-data:  # Named volume for MySQL persistence
-    driver: local
+  supershop-app:
+    build: .                      # 👈 build from local Dockerfile (NOT from Docker Hub)
+    container_name: supershop-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://supershop-mysql:3306/vivianstore_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: cheseh2005
+      SPRING_DATASOURCE_PASSWORD: yourpassword
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
+    depends_on:
+      - mysql
+    networks:
+      - supershop-net
+
+networks:
+  supershop-net:
+    driver: bridge
